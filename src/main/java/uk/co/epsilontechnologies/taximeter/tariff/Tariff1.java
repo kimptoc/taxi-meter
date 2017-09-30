@@ -21,114 +21,15 @@ import static uk.co.epsilontechnologies.taximeter.utils.CalendarUtils.isWeekday;
  *
  * @author Shane Gibson
  */
-public class Tariff1 extends AbstractTariff {
+public class Tariff1 extends GenericTariff {
 
-    /**
-     * @see Tariff#applies(DateTime)
-     */
-    @Override
-    public boolean applies(final DateTime dateTime) {
-        return isWeekday(dateTime) && isBetweenHours(dateTime, 6, 20) && !CalendarUtils.isPublicHoliday(dateTime);
+    public Tariff1() {
+        super("2.40","254.6", "54.8", "17.20", "127.3", "27.4", "0.20", "89.2", "19.2", "0.20",
+                new TariffTimeFilter() {
+                    @Override
+                    public boolean applies(DateTime dateTime) {
+                        return isWeekday(dateTime) && isBetweenHours(dateTime, 6, 20) && !CalendarUtils.isPublicHoliday(dateTime);
+                    }
+                });
     }
-
-    /**
-     * @see Tariff#getFlagFallAmount()
-     */
-    @Override
-    public BigDecimal getFlagFallAmount() {
-        return new BigDecimal("2.40");
-    }
-
-    /**
-     * @see Tariff#getFlagFallDistanceLimit()
-     */
-    @Override
-    public BigDecimal getFlagFallDistanceLimit() {
-        return new BigDecimal("254.6");
-    }
-
-    /**
-     * @see Tariff#getFlagFallTimeLimit()
-     */
-    @Override
-    public BigDecimal getFlagFallTimeLimit() {
-        return new BigDecimal("54.8");
-    }
-
-    /**
-     * @see Tariff#getHighLowFareBoundary()
-     */
-    @Override
-    public BigDecimal getHighLowFareBoundary() {
-        return new BigDecimal("17.20");
-    }
-
-    /**
-     * @see Tariff#getLowFareSubTariff()
-     */
-    @Override
-    public SubTariff getLowFareSubTariff() {
-        return new SubTariff() {
-
-            /**
-             * @see SubTariff#getDistanceLimit()
-             */
-            @Override
-            public BigDecimal getDistanceLimit() {
-                return new BigDecimal("127.3");
-            }
-
-            /**
-             * @see SubTariff#getTimeLimit()
-             */
-            @Override
-            public BigDecimal getTimeLimit() {
-                return new BigDecimal("27.4");
-            }
-
-            /**
-             * @see SubTariff#getIncrementAmount()
-             */
-            @Override
-            public BigDecimal getIncrementAmount() {
-                return new BigDecimal("0.20");
-            }
-
-        };
-    }
-
-    /**
-     * @see Tariff#getHighFareSubTariff()
-     */
-    @Override
-    public SubTariff getHighFareSubTariff() {
-        return new SubTariff() {
-
-            /**
-             * @see SubTariff#getIncrementAmount()
-             */
-            @Override
-            public BigDecimal getIncrementAmount() {
-                return new BigDecimal("0.20");
-            }
-
-            /**
-             * @see SubTariff#getDistanceLimit()
-             */
-            @Override
-            public BigDecimal getDistanceLimit() {
-                return new BigDecimal("89.2");
-            }
-
-            /**
-             * @see SubTariff#getTimeLimit()
-             */
-            @Override
-            public BigDecimal getTimeLimit() {
-                return new BigDecimal("19.2");
-            }
-
-        };
-    }
-
 }

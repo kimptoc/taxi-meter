@@ -3,14 +3,12 @@ package uk.co.epsilontechnologies.taximeter;
 import org.joda.time.DateTime;
 import uk.co.epsilontechnologies.taximeter.calculator.FareCalculator;
 import uk.co.epsilontechnologies.taximeter.model.Fare;
-import uk.co.epsilontechnologies.taximeter.tariff.Tariff1;
-import uk.co.epsilontechnologies.taximeter.tariff.Tariff2;
-import uk.co.epsilontechnologies.taximeter.tariff.Tariff3;
-import uk.co.epsilontechnologies.taximeter.tariff.TariffLookup;
+import uk.co.epsilontechnologies.taximeter.tariff.*;
+import uk.co.epsilontechnologies.taximeter.utils.CalendarUtils;
 
 import java.math.BigDecimal;
 
-import static uk.co.epsilontechnologies.taximeter.utils.CalendarUtils.differenceInSeconds;
+import static uk.co.epsilontechnologies.taximeter.utils.CalendarUtils.*;
 
 /**
  * <p>API for a the meter of a TfL Taxi. This exposes the key features of a Taxi Journey's interaction with the Taxi Meter.
@@ -57,7 +55,32 @@ public class TflTaxiMeter implements Runnable, TaxiMeter {
      * @param odometer the odometer to use
      */
     public TflTaxiMeter(final Odometer odometer) {
-        this(new Poller(), new FareCalculator(new TariffLookup(new Tariff1(), new Tariff2(), new Tariff3())), odometer);
+        this(new Poller(), new FareCalculator(
+                new TariffLookup(
+                        new GenericTariff("2.40","254.6", "54.8", "17.20", "127.3", "27.4", "0.20", "89.2", "19.2", "0.20",
+                                new TariffTimeFilter() {
+                            @Override
+                            public boolean applies(DateTime dateTime) {
+                                return isWeekday(dateTime) && isBetweenHours(dateTime, 6, 20) && !CalendarUtils.isPublicHoliday(dateTime);
+                            }
+                        }),
+                        new GenericTariff("2.40","206.8", "44.4", "20.80", "103.4", "22.2", "0.20", "89.2", "19.2", "0.20",
+                                new TariffTimeFilter() {
+                                    @Override
+                                    public boolean applies(DateTime dateTime) {
+                                        return ((isWeekday(dateTime) && isBetweenHours(dateTime, 20, 22)) || (isWeekend(dateTime) && isBetweenHours(dateTime, 6, 22)))
+                                                && !CalendarUtils.isPublicHoliday(dateTime);
+                                    }
+                                }),
+                        new GenericTariff("2.40","166.8", "35.8", "25.20", "83.4", "17.9", "0.20", "89.2", "19.2", "0.20",
+                                new TariffTimeFilter() {
+                                    @Override
+                                    public boolean applies(DateTime dateTime) {
+                                        return dateTime.getHourOfDay() < 6 || dateTime.getHourOfDay() >= 22 || CalendarUtils.isPublicHoliday(dateTime);
+                                    }
+                                })
+                )),
+                odometer);
     }
 
     /**
