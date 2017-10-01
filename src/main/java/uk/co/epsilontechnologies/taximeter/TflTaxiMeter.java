@@ -47,6 +47,10 @@ public class TflTaxiMeter implements Runnable, TaxiMeter {
      */
     protected DateTime endTime;
 
+    /**
+     * Our timepiece
+     */
+    protected Clock clock = new Clock();
 
     /**
      * Constructs the Taxi Meter for the given Odometer, using the standard TariffLookup (with Tariff1, Tariff2 and
@@ -105,7 +109,7 @@ public class TflTaxiMeter implements Runnable, TaxiMeter {
             throw new IllegalStateException("Journey already in progress");
         }
         this.odometer.reset();
-        this.startTime = getNow();
+        this.startTime = clock.getNow();
         this.poller.start(this);
         this.fare = fareCalculator.getFlagFall(startTime);
     }
@@ -151,12 +155,8 @@ public class TflTaxiMeter implements Runnable, TaxiMeter {
      */
     @Override
     public void run() {
-        final DateTime now = getNow();
+        final DateTime now = clock.getNow();
         this.fare = fareCalculator.calculateFare(fare, differenceInSeconds(now, startTime), odometer.getDistance(), now);
-    }
-
-    protected DateTime getNow() {
-        return new DateTime();
     }
 
 }

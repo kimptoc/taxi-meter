@@ -18,6 +18,11 @@ import static uk.co.epsilontechnologies.taximeter.utils.CalendarUtils.*;
  */
 public class TflTaxiMeter2017 extends TflTaxiMeter {
 
+    public TflTaxiMeter2017(Odometer odometer, Clock overrideClock) {
+        this(odometer);
+        this.clock = overrideClock;
+    }
+
     /**
      * Constructs the Taxi Meter for the given Odometer, using the standard TariffLookup (with Tariff1, Tariff2 and
      * Tariff3) and standard Poller.

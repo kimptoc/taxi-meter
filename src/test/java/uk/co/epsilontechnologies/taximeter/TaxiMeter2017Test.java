@@ -25,7 +25,7 @@ public class TaxiMeter2017Test {
 
     @Before
     public void setUp() {
-        this.underTest = new TestableTflTaxiMeter2017(new Odometer() {
+        this.underTest = new TflTaxiMeter2017(new Odometer() {
             @Override
             public BigDecimal getDistance() {
                 return distanceTravelled;
@@ -34,7 +34,7 @@ public class TaxiMeter2017Test {
             @Override
             public void reset() {
             }
-        });
+        }, new ManualClock());
     }
 
     @Test
@@ -106,14 +106,10 @@ public class TaxiMeter2017Test {
 
     }
 
-    class TestableTflTaxiMeter2017 extends TflTaxiMeter2017 {
-
-        public TestableTflTaxiMeter2017(Odometer odometer) {
-            super(odometer);
-        }
+    class ManualClock extends Clock {
 
         @Override
-        protected DateTime getNow() {
+        public DateTime getNow() {
             return currentTime;
         }
     }
