@@ -105,7 +105,7 @@ public class TflTaxiMeter implements Runnable, TaxiMeter {
             throw new IllegalStateException("Journey already in progress");
         }
         this.odometer.reset();
-        this.startTime = new DateTime();
+        this.startTime = getNow();
         this.poller.start(this);
         this.fare = fareCalculator.getFlagFall(startTime);
     }
@@ -151,8 +151,12 @@ public class TflTaxiMeter implements Runnable, TaxiMeter {
      */
     @Override
     public void run() {
-        final DateTime now = new DateTime();
+        final DateTime now = getNow();
         this.fare = fareCalculator.calculateFare(fare, differenceInSeconds(now, startTime), odometer.getDistance(), now);
+    }
+
+    protected DateTime getNow() {
+        return new DateTime();
     }
 
 }
