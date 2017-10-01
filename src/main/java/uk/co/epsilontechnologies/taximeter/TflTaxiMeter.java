@@ -157,9 +157,11 @@ public class TflTaxiMeter implements Runnable, TaxiMeter {
     @Override
     public void run() {
         try {
-//            Log.info("Recalculating fare");
             final DateTime now = clock.getNow();
-            this.fare = fareCalculator.calculateFare(fare, differenceInSeconds(now, startTime), odometer.getDistance(), now);
+            BigDecimal duration = differenceInSeconds(now, startTime);
+            BigDecimal distance = odometer.getDistance();
+            this.fare = fareCalculator.calculateFare(fare, duration, distance, now);
+//            Log.info(this.toString()+":Recalculating fare: "+fare.getAmount()+", elapsed seconds:"+duration+", distance:"+distance);
         } catch (Exception e) {
             Log.exception(e);
         }

@@ -74,7 +74,7 @@ public final class CalendarUtils {
      * @return the difference in seconds between the from and to date times, as a double
      */
     public static BigDecimal differenceInSeconds(final DateTime to, final DateTime from) {
-        return new BigDecimal(from.getMillis()).subtract(new BigDecimal(to.getMillis())).divide(new BigDecimal("1000"));
+        return new BigDecimal(to.getMillis()).subtract(new BigDecimal(from.getMillis())).divide(new BigDecimal("1000"));
     }
 
     /**

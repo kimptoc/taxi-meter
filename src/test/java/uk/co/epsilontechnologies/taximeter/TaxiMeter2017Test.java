@@ -25,6 +25,7 @@ public class TaxiMeter2017Test {
 
     @Before
     public void setUp() {
+        distanceTravelled = BigDecimal.ZERO;
         this.underTest = new TflTaxiMeter2017(new Odometer() {
             @Override
             public BigDecimal getDistance() {
@@ -54,6 +55,31 @@ public class TaxiMeter2017Test {
         assertEquals(new BigDecimal("2.60"), underTest.getFare() );
 
         distanceTravelled = new BigDecimal("235.1");
+        Thread.sleep(meterTickTime);
+        assertEquals(new BigDecimal("2.80"), underTest.getFare() );
+
+
+    }
+
+    @Test
+    public void shouldCalculateFareTariff1TimeBased() throws InterruptedException {
+
+        currentTime = new DateTime(2017,9, 29, 9,0,0, DateTimeZone.forTimeZone(TimeZone.getTimeZone("Europe/London")));
+        underTest.startJourney();
+
+        // wait for taxi meter to tick over
+        Thread.sleep(meterTickTime);
+
+        // arrange
+        assertEquals(new BigDecimal("2.60"), underTest.getFare() );
+
+        // 30 seconds later, no fare change
+        currentTime = new DateTime(2017,9, 29, 9,0,30, DateTimeZone.forTimeZone(TimeZone.getTimeZone("Europe/London")));
+        Thread.sleep(meterTickTime);
+        assertEquals(new BigDecimal("2.60"), underTest.getFare() );
+
+        // another 30 seconds, fare should go up
+        currentTime = new DateTime(2017,9, 29, 9,1,0, DateTimeZone.forTimeZone(TimeZone.getTimeZone("Europe/London")));
         Thread.sleep(meterTickTime);
         assertEquals(new BigDecimal("2.80"), underTest.getFare() );
 
