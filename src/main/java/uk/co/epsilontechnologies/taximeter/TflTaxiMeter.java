@@ -5,6 +5,7 @@ import uk.co.epsilontechnologies.taximeter.calculator.FareCalculator;
 import uk.co.epsilontechnologies.taximeter.model.Fare;
 import uk.co.epsilontechnologies.taximeter.tariff.*;
 import uk.co.epsilontechnologies.taximeter.utils.CalendarUtils;
+import uk.co.epsilontechnologies.taximeter.utils.Log;
 
 import java.math.BigDecimal;
 
@@ -155,8 +156,13 @@ public class TflTaxiMeter implements Runnable, TaxiMeter {
      */
     @Override
     public void run() {
-        final DateTime now = clock.getNow();
-        this.fare = fareCalculator.calculateFare(fare, differenceInSeconds(now, startTime), odometer.getDistance(), now);
+        try {
+//            Log.info("Recalculating fare");
+            final DateTime now = clock.getNow();
+            this.fare = fareCalculator.calculateFare(fare, differenceInSeconds(now, startTime), odometer.getDistance(), now);
+        } catch (Exception e) {
+            Log.exception(e);
+        }
     }
 
 }
