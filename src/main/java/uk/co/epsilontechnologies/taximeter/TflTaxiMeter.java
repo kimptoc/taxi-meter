@@ -158,13 +158,25 @@ public class TflTaxiMeter implements Runnable, TaxiMeter {
     public void run() {
         try {
             final DateTime now = clock.getNow();
-            BigDecimal duration = differenceInSeconds(now, startTime);
-            BigDecimal distance = odometer.getDistance();
+            BigDecimal duration = getDuration(now);
+            BigDecimal distance = getDistance();
             this.fare = fareCalculator.calculateFare(fare, duration, distance, now);
 //            Log.info(this.toString()+":Recalculating fare: "+fare.getAmount()+", elapsed seconds:"+duration+", distance:"+distance);
         } catch (Exception e) {
             Log.exception(e);
         }
+    }
+
+    public BigDecimal getDuration() {
+        return getDuration(clock.getNow());
+    }
+
+    public BigDecimal getDuration(DateTime now) {
+        return differenceInSeconds(now, startTime);
+    }
+
+    public BigDecimal getDistance() {
+        return odometer.getDistance();
     }
 
 }
